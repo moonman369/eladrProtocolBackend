@@ -21,7 +21,7 @@ cd ../
 * Install Nodejs by the following commands:
 ```
 ## nodejs version 16.18.0
-curl -sL https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh -o install_nvm.sh
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
 ``` 
 ```
 # Restart the temainal when the command successfully executed.
