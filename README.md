@@ -9,7 +9,7 @@ You can run eladrProtocolBackend on a clean Linux machine or VM.
  ```
 * Install IPFS by the following commands:
 ```
-## ipfs version 0.16.0 or above is  preferred
+## ipfs version 0.16.0 
 wget https://dist.ipfs.tech/kubo/v0.16.0/kubo_v0.16.0_linux-amd64.tar.gz
 tar -xvzf kubo_v0.16.0_linux-amd64.tar.gz
 cd kubo
@@ -20,7 +20,7 @@ cd ../
 
 * Install Nodejs by the following commands:
 ```
-## nodejs version 16.18.0 or above is preferred
+## nodejs version 16.18.0
 curl -sL https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh -o install_nvm.sh
 ``` 
 ```
@@ -32,7 +32,7 @@ curl -sL https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh -o inst
 ```
 * Install and Setup MySql by the following commands:
 ```
-## My sql version 8 or above is preferred
+## My sql version 8 
 sudo apt install mysql-server
 sudo systemctl start mysql.service
 sudo mysql
