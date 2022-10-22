@@ -222,7 +222,7 @@ app.get('/files', async(req,res)=>{
 //To search in the db
 app.post('/search', async(req,res)=>{
     let searchTerm = req.query.searchTerm;
-    videoandmeta.findAll({where: [ Sequelize.literal(`MATCH (hashvideo) AGAINST (${searchTerm})`)]}).then(function (videometa){
+    videoandmeta.findAll({where: {hashvideo: searchTerm.toString()} /** [ Sequelize.literal(`MATCH (hashvideo) AGAINST (${searchTerm})`)] */}).then(function (videometa){
         if(!videometa){
             res.status(400).send('None found');
         }else{
