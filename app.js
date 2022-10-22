@@ -14,6 +14,8 @@ const cheerio = require("cheerio");
 const pretty = require("pretty");
 //To add ipfs
 import * as IPFS from 'ipfs-core'
+// Imported from models/videometa.cjs
+import videoandmeta from "./models/videometa.cjs";
 const ipfs = await IPFS.create();
 //let ipfs2 = require('ipfs-api')({host: "localhost", port: 8080, protocol: "http"});
 const BufferList = require('bl');
@@ -174,7 +176,7 @@ app.post('/database', async(req,res)=>{
     let Title = req.body.title;
     let Description = req.body.description;
 
-    return await videometa.create({
+    return await videoandmeta.create({
         hashvideo: HashVideo,
         hashmeta: HashMeta,
         wallet: Wallet,
@@ -193,7 +195,7 @@ app.post('/database', async(req,res)=>{
 app.get('/database', async(req,res)=>{
     let id = req.body.id;
      // return the promise itself
-     return await videometa.findOne({
+     return await videoandmeta.findOne({
         where: {
            id: id
         }
@@ -208,7 +210,7 @@ app.get('/database', async(req,res)=>{
 
 //To get all the files 
 app.get('/files', async(req,res)=>{
-    return await videometa.findAll().then(function (videometa) {
+    return await videoandmeta.findAll().then(function (videometa) {
         if(!videometa){
             res.status(400).send('None found');
         }else{
@@ -220,7 +222,7 @@ app.get('/files', async(req,res)=>{
 //To search in the db
 app.post('/search', async(req,res)=>{
     let searchTerm = req.query.searchTerm;
-    videometa.findAll({where: [ Sequelize.literal(`MATCH (hashvideo) AGAINST (${searchTerm})`)]}).then(function (videometa){
+    videoandmeta.findAll({where: [ Sequelize.literal(`MATCH (hashvideo) AGAINST (${searchTerm})`)]}).then(function (videometa){
         if(!videometa){
             res.status(400).send('None found');
         }else{
