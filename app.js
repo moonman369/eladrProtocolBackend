@@ -58,7 +58,7 @@ app.get('/eladr', (req,res)=>{
 //To check the address has eladr token.
 app.get('/evaluvate', (req,res)=>{
     // URL of the page we want to scrape (This has to be updated from the angular front end)
-     const address = req.body.address;
+     const address = req.query.address;
      const url = `https://cardanoscan.io/tokenHoldings/${address}`;
      async function scrapeData() {
         try {
@@ -141,7 +141,7 @@ const addFile = async (fileName, filePath) => {
 
 //To get a single file
 app.get('/file', async(req,res)=>{
-    let hash = req.body.hash;
+    let hash = req.query.hash;
     res.send(`https://gateway.ipfs.io/ipfs/${hash}`);   
 }); 
 
@@ -158,7 +158,7 @@ app.post('/meta', async(req,res)=>{
 app.get('/meta', async(req,res)=>{
     //ipfs.on('ready', async () => {
         // let data = req.body;
-        let hash = req.body.hash;
+        let hash = req.query.hash;
         //Converting cid v0 to v1
         let cid =new CID(hash).toV1().toString('base32');
         //Then retriving the data from the ipfs.
@@ -193,7 +193,7 @@ app.post('/database', async(req,res)=>{
 
 //To get a single db entry
 app.get('/database', async(req,res)=>{
-    let id = req.body.id;
+    let id = req.query.id;
      // return the promise itself
      return await videoandmeta.findOne({
         where: {
