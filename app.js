@@ -210,7 +210,6 @@ app.get('/database/:id', async(req,res)=>{
 
 //To get all the files 
 app.get('/files', async(req,res)=>{
-    console.log(req.path)
     return await videoandmeta.findAll().then(function (videometa) {
         if(!videometa){
             res.status(400).send('None found');
