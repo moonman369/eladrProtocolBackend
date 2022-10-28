@@ -24,7 +24,7 @@ let multer = require('multer');
 const upload = multer({ dest: "uploads/" });
 const fs = require('fs');
 var mysql = require('mysql');
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const sequelize = require('./utils/database.cjs');
 sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
@@ -222,11 +222,24 @@ app.get('/files', async(req,res)=>{
 //To search in the db
 app.post('/search/:searchTerm', async(req,res)=>{
     let searchTerm = req.params['searchTerm'];
-    videoandmeta.findAll({where: {hashvideo: searchTerm.toString()} /** [ Sequelize.literal(`MATCH (hashvideo) AGAINST (${searchTerm})`)] */}).then(function (videometa){
+    // videoandmeta.findAll({
+    //     where: {
+    //         [Op.or]: {
+    //             hashvideo: { [Op.like]: `%${searchTerm.toString()}%` }, 
+    //             title: { [Op.like]: `%${searchTerm.toString()}%` }, 
+    //             description: { [Op.like]: `%${searchTerm.toString()}%` },
+    //             wallet: { [Op.like]: `%${searchTerm.toString()}%` },
+    //         }
+    //     } /** [ Sequelize.literal(`MATCH (hashvideo) AGAINST (${searchTerm})`)] */
+    //  })
+
+    videoandmeta.sequelize.query(
+        `SELECT * ,MATCH (title, wallet, description, hashvideo)AGAINST ('${searchTerm}') AS score FROM videoandmeta WHERE MATCH (title, wallet, description, hashvideo) AGAINST ('${searchTerm}')ORDER BY score DESC`
+    ).then(function (videometa){
         if(!videometa){
             res.status(400).send('None found');
         }else{
-            res.status(200).send(videometa);
+            res.status(200).send(videometa[0]);
         }
     });
 });
@@ -235,3 +248,6 @@ app.post('/search/:searchTerm', async(req,res)=>{
 app.listen(port,()=> {
     console.log('listen port',process.env.PORT);
 })
+
+// SELECT * ,MATCH (title, wallet, description, hashvideo)AGAINST ('genesis') AS score FROM videoandmeta WHERE MATCH (title, wallet, description, hashvideo) AGAINST ('genesis')ORDER BY score DESC LIMIT 10
+

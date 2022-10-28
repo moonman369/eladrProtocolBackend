@@ -45,8 +45,13 @@ const videoandmeta = sequelize.define('videoandmeta', {
       { type: 'FULLTEXT', name: 'text_idx', fields: ['hashvideo','hashmeta','wallet','title','description'] }
     ]
   })
+
+  videoandmeta.sequelize.query(`ALTER TABLE videoandmeta ADD FULLTEXT(title, wallet, description, hashvideo);`)
   
 // Exporting User, using this constant
 // we can perform CRUD operations on
 // 'user' table.
 module.exports = videoandmeta
+
+// ALTER TABLE videoandmeta
+// ADD FULLTEXT(title, wallet, description, hashvideo);
