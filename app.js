@@ -24,7 +24,7 @@ let multer = require('multer');
 const upload = multer({ dest: "uploads/" });
 const fs = require('fs');
 var mysql = require('mysql');
-const { Sequelize, Op } = require('sequelize');
+const { Sequelize } = require('sequelize');
 const sequelize = require('./utils/database.cjs');
 sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
