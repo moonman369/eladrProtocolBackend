@@ -222,19 +222,9 @@ app.get('/files', async(req,res)=>{
 //To search in the db
 app.post('/search/:searchTerm', async(req,res)=>{
     let searchTerm = req.params['searchTerm'];
-    // videoandmeta.findAll({
-    //     where: {
-    //         [Op.or]: {
-    //             hashvideo: { [Op.like]: `%${searchTerm.toString()}%` }, 
-    //             title: { [Op.like]: `%${searchTerm.toString()}%` }, 
-    //             description: { [Op.like]: `%${searchTerm.toString()}%` },
-    //             wallet: { [Op.like]: `%${searchTerm.toString()}%` },
-    //         }
-    //     } /** [ Sequelize.literal(`MATCH (hashvideo) AGAINST (${searchTerm})`)] */
-    //  })
 
     videoandmeta.sequelize.query(
-        `SELECT * ,MATCH (title, wallet, description, hashvideo)AGAINST ('${searchTerm}') AS score FROM videoandmeta WHERE MATCH (title, wallet, description, hashvideo) AGAINST ('${searchTerm}')ORDER BY score DESC`
+        `SELECT * ,MATCH (hashvideo,hashmeta,wallet,title,description)AGAINST ('${searchTerm}') AS score FROM videoandmeta WHERE MATCH (hashvideo,hashmeta,wallet,title,description) AGAINST ('${searchTerm}')ORDER BY score DESC`
     ).then(function (videometa){
         if(!videometa){
             res.status(400).send('None found');
@@ -248,6 +238,4 @@ app.post('/search/:searchTerm', async(req,res)=>{
 app.listen(port,()=> {
     console.log('listen port',process.env.PORT);
 })
-
-// SELECT * ,MATCH (title, wallet, description, hashvideo)AGAINST ('genesis') AS score FROM videoandmeta WHERE MATCH (title, wallet, description, hashvideo) AGAINST ('genesis')ORDER BY score DESC LIMIT 10
 
