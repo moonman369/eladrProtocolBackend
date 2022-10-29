@@ -56,9 +56,9 @@ app.get('/eladr', (req,res)=>{
 })
 
 //To check the address has eladr token.
-app.get('/evaluvate', (req,res)=>{
+app.get('/evaluvate/:address', (req,res)=>{
     // URL of the page we want to scrape (This has to be updated from the angular front end)
-     const address = req.body.address;
+     const address = req.params['address'];
      const url = `https://cardanoscan.io/tokenHoldings/${address}`;
      async function scrapeData() {
         try {
@@ -140,8 +140,8 @@ const addFile = async (fileName, filePath) => {
 };
 
 //To get a single file
-app.get('/file', async(req,res)=>{
-    let hash = req.body.hash;
+app.get('/file/:hash', async(req,res)=>{
+    let hash = req.params['hash'];
     res.send(`https://gateway.ipfs.io/ipfs/${hash}`);   
 }); 
 
@@ -155,10 +155,10 @@ app.post('/meta', async(req,res)=>{
 });
 
 //To retrive file metadata
-app.get('/meta', async(req,res)=>{
+app.get('/meta/:hash', async(req,res)=>{
     //ipfs.on('ready', async () => {
         // let data = req.body;
-        let hash = req.body.hash;
+        let hash = req.params['hash'];
         //Converting cid v0 to v1
         let cid =new CID(hash).toV1().toString('base32');
         //Then retriving the data from the ipfs.
@@ -192,8 +192,8 @@ app.post('/database', async(req,res)=>{
 });
 
 //To get a single db entry
-app.get('/database', async(req,res)=>{
-    let id = req.body.id;
+app.get('/database/:id', async(req,res)=>{
+    let id = req.params['id'];
      // return the promise itself
      return await videoandmeta.findOne({
         where: {
@@ -220,13 +220,16 @@ app.get('/files', async(req,res)=>{
 });
 
 //To search in the db
-app.post('/search', async(req,res)=>{
-    let searchTerm = req.query.searchTerm;
-    videoandmeta.findAll({where: {hashvideo: searchTerm.toString()} /** [ Sequelize.literal(`MATCH (hashvideo) AGAINST (${searchTerm})`)] */}).then(function (videometa){
+app.post('/search/:searchTerm', async(req,res)=>{
+    let searchTerm = req.params['searchTerm'];
+
+    videoandmeta.sequelize.query(
+        `SELECT * ,MATCH (hashvideo,hashmeta,wallet,title,description)AGAINST ('${searchTerm}') AS score FROM videoandmeta WHERE MATCH (hashvideo,hashmeta,wallet,title,description) AGAINST ('${searchTerm}')ORDER BY score DESC`
+    ).then(function (videometa){
         if(!videometa){
             res.status(400).send('None found');
         }else{
-            res.status(200).send(videometa);
+            res.status(200).send(videometa[0]);
         }
     });
 });
@@ -235,3 +238,4 @@ app.post('/search', async(req,res)=>{
 app.listen(port,()=> {
     console.log('listen port',process.env.PORT);
 })
+
