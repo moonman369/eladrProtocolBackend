@@ -149,7 +149,7 @@ app.get('/file/:hash', async(req,res)=>{
 app.post('/meta', async(req,res)=>{
     const data = req.body;
     //console.log(data)
-    const file = {path:'testFile',content:Buffer.from(`{"name":"${req.body.name}","description":"${req.body.description}","wallet":"${req.body.wallet}"}`)}
+    const file = {path:'testFile',content:Buffer.from(`{"name":"${req.body.name}","description":"${req.body.description}","wallet":"${req.body.wallet}","fileHash":"${req.body.fileHash}"}`)}
     const { cid } = await ipfs.add(file);
     res.send(`https://gateway.ipfs.io/ipfs/${cid}`);
 });
