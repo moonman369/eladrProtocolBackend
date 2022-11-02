@@ -33,7 +33,7 @@ sequelize.authenticate().then(() => {
  });
 //To create the database.
 //Uncomment this if you want to drop the entire db and reinitiate
-//sequelize.sync({force:true})
+//`sequelize.sync({force:true})
 sequelize.sync()
 // parse application/json
 app.use(bodyParser.json());                        
@@ -101,6 +101,7 @@ app.post('/file',field, async(req,res)=>{
           return res.status(400).send({ message: "Upload a file please!" });
         }else{
                 let file = req.file;
+                let fileType = req.file.mimetype;
                 let fileNameOg = req.file.originalname;
                 let fileNameUploaded = req.file.filename;
                 let filePath = req.file.path;
@@ -115,7 +116,11 @@ app.post('/file',field, async(req,res)=>{
                     });
                     if(fileHash){
                         console.log("File Hash received __>", fileHash);
-                        res.status(200).send(`https://gateway.ipfs.io/ipfs/${fileHash}`);
+                        const response = {
+                            fileHash: fileHash.toString(),
+                            fileType: fileType
+                        }
+                        res.status(200).send(response);
                     }
                 }else{
                     res.status(500).send({
@@ -149,7 +154,7 @@ app.get('/file/:hash', async(req,res)=>{
 app.post('/meta', async(req,res)=>{
     const data = req.body;
     //console.log(data)
-    const file = {path:'testFile',content:Buffer.from(`{"name":"${req.body.name}","description":"${req.body.description}","wallet":"${req.body.wallet}","fileHash":"${req.body.fileHash}"}`)}
+    const file = {path:'testFile',content:Buffer.from(`{"name":"${req.body.name}","description":"${req.body.description}","wallet":"${req.body.wallet}","fileHash":"${req.body.fileHash}","fileType":"${req.body.fileType}"}`)}
     const { cid } = await ipfs.add(file);
     res.send(`https://gateway.ipfs.io/ipfs/${cid}`);
 });
