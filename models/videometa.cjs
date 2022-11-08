@@ -29,6 +29,8 @@ const videoandmeta = sequelize.define('videoandmeta', {
   
     // Column-3, email
     hashmeta: { type: Sequelize.STRING, allowNull:false },
+
+    hashthumbnail: { type: Sequelize.STRING, allownull:false },
   
     // Column-4, default values for
     // dates => current time
@@ -42,7 +44,7 @@ const videoandmeta = sequelize.define('videoandmeta', {
 }, {
     indexes: [
       // add a FULLTEXT index
-      { type: 'FULLTEXT', name: 'videoandmeta', fields: ['hashvideo','hashmeta','wallet','title','description'] }
+      { type: 'FULLTEXT', name: 'videoandmeta', fields: ['hashvideo','hashmeta','wallet','title','description','hashthumbnail'] }
     ]
   })
 

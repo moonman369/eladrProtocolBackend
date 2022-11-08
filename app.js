@@ -33,7 +33,7 @@ sequelize.authenticate().then(() => {
  });
 //To create the database.
 //Uncomment this if you want to drop the entire db and reinitiate
-//`sequelize.sync({force:true})
+// sequelize.sync({force:true})
 sequelize.sync()
 // parse application/json
 app.use(bodyParser.json());                        
@@ -154,7 +154,7 @@ app.get('/file/:hash', async(req,res)=>{
 app.post('/meta', async(req,res)=>{
     const data = req.body;
     //console.log(data)
-    const file = {path:'testFile',content:Buffer.from(`{"name":"${req.body.name}","description":"${req.body.description}","wallet":"${req.body.wallet}","fileHash":"${req.body.fileHash}","fileType":"${req.body.fileType}"}`)}
+    const file = {path:'testFile',content:Buffer.from(`{"name":"${req.body.name}","description":"${req.body.description}","wallet":"${req.body.wallet}","fileHash":"${req.body.fileHash}","fileType":"${req.body.fileType}","thumbnailHash":"${req.body.thumbnailHash}"}`)}
     const { cid } = await ipfs.add(file);
     res.send(`https://gateway.ipfs.io/ipfs/${cid}`);
 });
@@ -180,13 +180,15 @@ app.post('/database', async(req,res)=>{
     let Wallet = req.body.wallet;
     let Title = req.body.title;
     let Description = req.body.description;
+    let HashThumbnail = req.body.hashThumbnail;
 
     return await videoandmeta.create({
         hashvideo: HashVideo,
         hashmeta: HashMeta,
         wallet: Wallet,
-        title:Title,
-        description:Description
+        title: Title,
+        description: Description,
+        hashthumbnail: HashThumbnail
     }).then(function (videometa) {
         if (videometa) {
             res.status(200).send(videometa);
@@ -229,7 +231,7 @@ app.post('/search/:searchTerm', async(req,res)=>{
     let searchTerm = req.params['searchTerm'];
 
     videoandmeta.sequelize.query(
-        `SELECT * ,MATCH (hashvideo,hashmeta,wallet,title,description)AGAINST ('${searchTerm}') AS score FROM videoandmeta WHERE MATCH (hashvideo,hashmeta,wallet,title,description) AGAINST ('${searchTerm}')ORDER BY score DESC`
+        `SELECT * ,MATCH (hashvideo,hashmeta,wallet,title,description,hashthumbnail)AGAINST ('${searchTerm}') AS score FROM videoandmeta WHERE MATCH (hashvideo,hashmeta,wallet,title,description,hashthumbnail) AGAINST ('${searchTerm}')ORDER BY score DESC`
     ).then(function (videometa){
         if(!videometa){
             res.status(400).send('None found');
