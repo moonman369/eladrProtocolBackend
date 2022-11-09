@@ -36,7 +36,7 @@ const videoandmeta = sequelize.define('videoandmeta', {
     // dates => current time
     wallet: { type: Sequelize.STRING, allowNull:false },
     title: { type: Sequelize.STRING, allowNull:false },
-    description: { type: Sequelize.STRING, allowNull:false },
+    description: { type: Sequelize.TEXT('long'), allowNull:false },
     myDate: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
      // Timestamps
      createdAt: Sequelize.DATE,
