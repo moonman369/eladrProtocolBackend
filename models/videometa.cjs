@@ -31,6 +31,8 @@ const videoandmeta = sequelize.define('videoandmeta', {
     hashmeta: { type: Sequelize.STRING, allowNull:false },
 
     hashthumbnail: { type: Sequelize.STRING, allownull:false },
+
+    isgig: {type: Sequelize.BOOLEAN},
   
     // Column-4, default values for
     // dates => current time

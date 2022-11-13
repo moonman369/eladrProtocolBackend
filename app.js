@@ -24,7 +24,7 @@ let multer = require('multer');
 const upload = multer({ dest: "uploads/" });
 const fs = require('fs');
 var mysql = require('mysql');
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const sequelize = require('./utils/database.cjs');
 sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
@@ -154,7 +154,7 @@ app.get('/file/:hash', async(req,res)=>{
 app.post('/meta', async(req,res)=>{
     const data = req.body;
     //console.log(data)
-    const file = {path:'testFile',content:Buffer.from(`{"name":"${req.body.name}","description":"${req.body.description}","wallet":"${req.body.wallet}","fileHash":"${req.body.fileHash}","fileType":"${req.body.fileType}","thumbnailHash":"${req.body.thumbnailHash}"}`)}
+    const file = {path:'testFile',content:Buffer.from(`{"name":"${req.body.name}","description":"${req.body.description}","wallet":"${req.body.wallet}","fileHash":"${req.body.fileHash}","fileType":"${req.body.fileType}","thumbnailHash":"${req.body.thumbnailHash}","isGig":${req.body.isGig}}`)}
     const { cid } = await ipfs.add(file);
     res.send(`https://gateway.ipfs.io/ipfs/${cid}`);
 });
@@ -181,6 +181,7 @@ app.post('/database', async(req,res)=>{
     let Title = req.body.title;
     let Description = req.body.description;
     let HashThumbnail = req.body.hashThumbnail;
+    let IsGig = req.body.isGig
 
     return await videoandmeta.create({
         hashvideo: HashVideo,
@@ -188,7 +189,8 @@ app.post('/database', async(req,res)=>{
         wallet: Wallet,
         title: Title,
         description: Description,
-        hashthumbnail: HashThumbnail
+        hashthumbnail: HashThumbnail,
+        isgig: IsGig
     }).then(function (videometa) {
         if (videometa) {
             res.status(200).send(videometa);
@@ -216,8 +218,15 @@ app.get('/database/:id', async(req,res)=>{
 });
 
 //To get all the files 
-app.get('/files', async(req,res)=>{
-    return await videoandmeta.findAll().then(function (videometa) {
+app.get('/files/:page', async(req,res)=>{
+    const page = parseInt(req.params['page'])
+    return await videoandmeta.findAll(
+        {where: 
+            {id: 
+                {[Op.between]: [((page - 1) * 10) + 1, page * 10]}
+            }
+        })
+        .then(function (videometa) {
         if(!videometa){
             res.status(400).send('None found');
         }else{
